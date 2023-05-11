@@ -6,15 +6,15 @@ const resolvers = {
     Query: {
     me: async (parent, args, context) => {
         if(context.user) {
-            const user = await User.findOne({_id: context.user._id}).populate('savedBooks')
+            const user = await User.findOne({_id: context.user._id}).select('__v -password')
             return user;
         }
         throw new AuthenticationError("Not user is found with this ID")
     },
 },
     Mutation: {
-        addUser: async(parent, {username,email,password}) => {
-            const user = await User.create({username, email, password});
+        addUser: async(parent, args) => {
+            const user = await User.create(args);
             const token = signToken(user);
             return {token, user}
           },
